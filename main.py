@@ -39,6 +39,26 @@ app.add_middleware(
 @app.post("/webhook")
 async def receive_webhook(request: Request) -> JSONResponse:
     """
+        # === FULL RAW LOGGING FOR DEBUGGING ===
+    client_ip = request.client.host if request.client else None
+    headers = dict(request.headers)
+    body_bytes = await request.body()
+    try:
+        body_text = body_bytes.decode("utf-8", errors="replace")
+    except Exception:
+        body_text = str(body_bytes)
+
+    print("\n================= WEBHOOK RECEIVED =================")
+    print(f"Client IP: {client_ip}")
+    print("Headers:")
+    for k, v in headers.items():
+        print(f"  {k}: {v}")
+
+    print("\nRaw Body:")
+    print(body_text)
+    print("====================================================\n")
+    # === END DEBUG LOGGING ===
+
     Receive BetterVoice webhook events.
 
     - Attempts to parse JSON body; if parsing fails it will log raw body.
